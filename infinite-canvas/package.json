@@ -1,0 +1,31 @@
+{
+  "name": "infinite-canvas",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "tsc -b && vite build",
+    "check:types": "tsc --noEmit -p tsconfig.app.json",
+    "check:biome": "biome lint --diagnostic-level=error --no-errors-on-unmatched --files-ignore-unknown=true",
+    "check": "npm run check:types && npm run check:biome",
+    "lint": "npm run check:biome",
+    "format": "biome check --write --unsafe",
+    "preview": "vite preview",
+    "deploy": "npm run build && wrangler deploy"
+  },
+  "dependencies": {
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "2.3.8",
+    "@types/node": "^25.0.1",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^5.1.2",
+    "babel-plugin-react-compiler": "^1.0.0",
+    "typescript": "~5.9.3",
+    "vite": "^7.2.7"
+  }
+}
