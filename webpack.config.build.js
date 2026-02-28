@@ -56,7 +56,7 @@ module.exports = merge(config, {
         { from: 'section-10-grid-slideshow', to: 'section-10-grid-slideshow' },
         { from: 'gradientslider', to: 'gradientslider' },
         { from: 'art', to: 'art' },
-        { from: 'section-13-repeating', to: 'section-13-repeating' },
+        { from: 'section-13-repeating', to: 'section-13-repeating', globOptions: { ignore: ['**/.git', '**/.git/**'] } },
         { from: 'section-15-rotating/dist', to: 'section-15-rotating' },
         { from: 'section-19-marquee/dist', to: 'section-19-marquee' },
         { from: 'section-19-marquee/src/assets/images', to: 'section-19-marquee/assets/images', noErrorOnMissing: true },

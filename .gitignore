@@ -1,3 +1,6 @@
 /node_modules
 /.cache
 package-lock.json
+
+# Build output – Netlify generates this with npm run build
+/InfiniteCircularGallery
