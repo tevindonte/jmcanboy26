@@ -1,0 +1,40 @@
+/* ============================================
+   Premium Scroll Experience
+   Section focus, reveal, parallax
+   ============================================ */
+
+/* Vertical sections: transform-origin for scale focus effect */
+.gallery-section,
+.model-section,
+.horizontal-scroll-section,
+.circling-section,
+.rotating-section,
+.marquee-svg-section,
+.footer-section {
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Horizontal scroll items: focus effect */
+.horizontal-scroll-item {
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Reveal elements: base state before ScrollTrigger animates */
+.reveal-element {
+  opacity: 0;
+  transform: translateY(60px);
+}
+
+.reveal-element.in-view {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Parallax containers */
+.parallax {
+  will-change: transform;
+}

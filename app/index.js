@@ -6,24 +6,28 @@ import debounce from 'lodash/debounce'
 import { lerp } from 'utils/math'
 
 import Image1 from 'images/1.jpg'
-import Image2 from 'images/2.jpg'
+import Image2 from 'images/2.png'
 import Image3 from 'images/3.jpg'
 import Image4 from 'images/4.jpg'
-import Image5 from 'images/5.jpg'
+import Image5 from 'images/5.gif'
 import Image6 from 'images/6.jpg'
-import Image7 from 'images/7.jpg'
+import Image7 from 'images/7.gif'
 import Image8 from 'images/8.jpg'
 import Image9 from 'images/9.jpg'
 import Image10 from 'images/10.jpg'
 import Image11 from 'images/11.jpg'
-import Image12 from 'images/12.jpg'
 
 import Media from './Media'
-import Background from './Background'
+import ScrollController from './ScrollController'
+import InteractiveSectionController from './InteractiveSectionController'
+import PremiumScrollEffects from './PremiumScrollEffects'
+import HeavySectionLoader, { initPerformanceToggle } from './HeavySectionLoader'
 
 export default class App {
   constructor () {
     document.documentElement.classList.remove('no-js')
+    document.documentElement.classList.remove('loading')
+    document.documentElement.classList.add('loaded')
 
     this.scroll = {
       ease: 0.05,
@@ -42,13 +46,19 @@ export default class App {
 
     this.createGeometry()
     this.createMedias()
-    this.createBackground()
 
     this.update()
 
     this.addEventListeners()
 
     this.createPreloader()
+
+    HeavySectionLoader()
+    initPerformanceToggle()
+    this.premiumScroll = new PremiumScrollEffects()
+    this.scrollController = new ScrollController({ lenis: this.premiumScroll.lenis })
+    this.interactiveController = new InteractiveSectionController()
+    this.setupCardClickNavigation()
   }
 
   createPreloader () {
@@ -70,18 +80,18 @@ export default class App {
   }
 
   createRenderer () {
-    this.renderer = new Renderer()
+    this.renderer = new Renderer({ alpha: true })
 
     this.gl = this.renderer.gl
-    this.gl.clearColor(0.79607843137, 0.79215686274, 0.74117647058, 1)
+    this.gl.clearColor(0, 0, 0, 0)
 
-    document.body.appendChild(this.gl.canvas)
+    document.getElementById('gallery-section').appendChild(this.gl.canvas)
   }
 
   createCamera () {
     this.camera = new Camera(this.gl)
-    this.camera.fov = 45
-    this.camera.position.z = 20
+    this.camera.fov = 35
+    this.camera.position.z = 14
   }
 
   createScene () {
@@ -97,30 +107,28 @@ export default class App {
 
   createMedias () {
     this.mediasImages = [
-      { image: Image1, text: 'New Synagogue' },
-      { image: Image2, text: 'Paro Taktsang' },
-      { image: Image3, text: 'Petra' },
-      { image: Image4, text: 'Gooderham Building' },
-      { image: Image5, text: 'Catherine Palace' },
-      { image: Image6, text: 'Sheikh Zayed Mosque' },
-      { image: Image7, text: 'Madonna Corona' },
-      { image: Image8, text: 'Plaza de Espana' },
-      { image: Image9, text: 'Saint Martin' },
-      { image: Image10, text: 'Tugela Falls' },
-      { image: Image11, text: 'Sintra-Cascais' },
-      { image: Image12, text: 'The Prophet\'s Mosque' },
-      { image: Image1, text: 'New Synagogue' },
-      { image: Image2, text: 'Paro Taktsang' },
-      { image: Image3, text: 'Petra' },
-      { image: Image4, text: 'Gooderham Building' },
-      { image: Image5, text: 'Catherine Palace' },
-      { image: Image6, text: 'Sheikh Zayed Mosque' },
-      { image: Image7, text: 'Madonna Corona' },
-      { image: Image8, text: 'Plaza de Espana' },
-      { image: Image9, text: 'Saint Martin' },
-      { image: Image10, text: 'Tugela Falls' },
-      { image: Image11, text: 'Sintra-Cascais' },
-      { image: Image12, text: 'The Prophet\'s Mosque' },
+      { image: Image1, text: 'About me' },
+      { image: Image2, text: 'Business' },
+      { image: Image3, text: 'Professions' },
+      { image: Image4, text: 'Social Media Design' },
+      { image: Image5, text: 'Motion Design' },
+      { image: Image6, text: 'Logo Design' },
+      { image: Image7, text: 'Intro Design' },
+      { image: Image8, text: 'Digital Design' },
+      { image: Image9, text: 'Model' },
+      { image: Image10, text: 'Photography' },
+      { image: Image11, text: 'Contact' },
+      { image: Image1, text: 'About me' },
+      { image: Image2, text: 'Business' },
+      { image: Image3, text: 'Professions' },
+      { image: Image4, text: 'Social Media Design' },
+      { image: Image5, text: 'Motion Design' },
+      { image: Image6, text: 'Logo Design' },
+      { image: Image7, text: 'Intro Design' },
+      { image: Image8, text: 'Digital Design' },
+      { image: Image9, text: 'Model' },
+      { image: Image10, text: 'Photography' },
+      { image: Image11, text: 'Contact' },
     ]
 
     this.medias = this.mediasImages.map(({ image, text }, index) => {
@@ -141,36 +149,34 @@ export default class App {
     })
   }
 
-  createBackground () {
-    this.background = new Background({
-      gl: this.gl,
-      scene: this.scene,
-      viewport: this.viewport
-    })
-  }
-
   /**
    * Events.
    */
   onTouchDown (event) {
     this.isDown = true
+    this.hasMoved = false
+    this.pointerStartX = event.touches ? event.touches[0].clientX : event.clientX
+    this.pointerStartY = event.touches ? event.touches[0].clientY : event.clientY
 
     this.scroll.position = this.scroll.current
-    this.start = event.touches ? event.touches[0].clientX : event.clientX
+    this.start = this.pointerStartX
   }
 
   onTouchMove (event) {
     if (!this.isDown) return
 
     const x = event.touches ? event.touches[0].clientX : event.clientX
-    const distance = (this.start - x) * 0.01
+    const y = event.touches ? event.touches[0].clientY : event.clientY
+    const distX = Math.abs(x - this.pointerStartX)
+    const distY = Math.abs(y - this.pointerStartY)
+    if (distX > 8 || distY > 8) this.hasMoved = true
 
+    const distance = (this.start - x) * 0.01
     this.scroll.target = this.scroll.position + distance
   }
 
-  onTouchUp (event) {
+  onTouchUp () {
     this.isDown = false
-
     this.onCheck()
   }
 
@@ -181,6 +187,56 @@ export default class App {
     this.scroll.target += speed * 0.005
 
     this.onCheckDebounce()
+  }
+
+  /**
+   * Hero card index (0-11) -> data-section target for navigation
+   */
+  cardToSectionMap () {
+    return {
+      0: '6',    // About me
+      1: '7',    // Business
+      2: '8',    // Professions
+      3: '8',    // Social Media Design
+      4: 'motion', // Motion Design
+      5: '12',   // Logo Design
+      6: '11',   // Intro Design
+      7: '13',   // Digital Design
+      8: '15',   // Model
+      9: '16',   // Photography
+      10: '20'   // Contact
+    }
+  }
+
+  onGalleryClick (event) {
+    if (!this.medias || !this.medias.length) return
+    if (this.hasMoved) return
+    const rect = this.gl.canvas.getBoundingClientRect()
+    if (event.clientX < rect.left || event.clientX > rect.right ||
+        event.clientY < rect.top || event.clientY > rect.bottom) return
+
+    const width = this.medias[0].width
+    const worldX = (event.clientX - rect.left) / rect.width * this.viewport.width - this.viewport.width / 2
+    const cardIndex = Math.round((worldX + this.scroll.current) / width) % 12
+    const cardIndexClamped = Math.max(0, Math.min(10, cardIndex < 11 ? cardIndex : 10))
+
+    const cardCenterX = (cardIndexClamped + 0.5) * width - this.scroll.current
+    const clickOffsetFromCenter = Math.abs(worldX - cardCenterX)
+    if (clickOffsetFromCenter > width * 0.35) return
+
+    const targetSection = this.cardToSectionMap()[cardIndexClamped]
+    if (!targetSection) return
+
+    setTimeout(() => {
+      if (this.hasMoved) return
+      this.scrollController.navigateToSection(targetSection)
+    }, 150)
+  }
+
+  setupCardClickNavigation () {
+    const canvas = this.gl.canvas
+    canvas.style.cursor = 'pointer'
+    canvas.addEventListener('click', (e) => this.onGalleryClick(e))
   }
 
   onCheck () {
@@ -241,10 +297,6 @@ export default class App {
 
     if (this.medias) {
       this.medias.forEach(media => media.update(this.scroll, this.direction))
-    }
-
-    if (this.background) {
-      this.background.update(this.scroll, this.direction)
     }
 
     this.renderer.render({

@@ -1,0 +1,118 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --color-bg: #0d0c0f;
+  --color-text: #f5f0e8;
+  --color-text-muted: #6b6770;
+  --color-accent: #E7AA2C;
+  --circling-radius: 200;
+  --circling-duration: 25;
+  --font-syne: 'Syne', sans-serif;
+  --font-space: 'Space Mono', monospace;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-syne);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+}
+
+.circling-main {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.circling-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  padding: 5vh 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+}
+
+/* Each item orbits around center */
+.circling-item {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 140px;
+  height: 140px;
+  margin-left: -70px;
+  margin-top: -70px;
+  animation: circling calc(var(--circling-duration) * 1s) linear infinite;
+  transform-origin: center center;
+}
+
+.circling-container:hover .circling-item {
+  animation-play-state: paused;
+}
+
+@keyframes circling {
+  0% {
+    transform: rotate(var(--circling-offset, 0deg))
+      translate(calc(var(--circling-radius, 180) * 1px), 0)
+      rotate(calc(-1 * var(--circling-offset, 0deg)));
+  }
+  100% {
+    transform: rotate(calc(360deg + var(--circling-offset, 0deg)))
+      translate(calc(var(--circling-radius, 180) * 1px), 0)
+      rotate(calc(-360deg - var(--circling-offset, 0deg)));
+  }
+}
+
+.circling-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  border: 2px solid rgba(231, 170, 44, 0.2);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.circling-item:hover .circling-img {
+  transform: scale(1.15);
+  box-shadow: 0 12px 48px rgba(231, 170, 44, 0.25);
+  border-color: var(--color-accent);
+}
+
+/* Responsive: reduce radius on smaller viewports */
+@media (max-width: 768px) {
+  :root {
+    --circling-radius: 130;
+    --circling-duration: 20;
+  }
+
+  .circling-item {
+    width: 80px;
+    height: 80px;
+    margin-left: -40px;
+    margin-top: -40px;
+  }
+
+  .circling-container {
+    padding: 6vh 0;
+  }
+}

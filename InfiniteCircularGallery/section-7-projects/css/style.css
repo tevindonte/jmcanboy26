@@ -1,0 +1,216 @@
+*,
+*::after,
+*::before {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background: #fff;
+  color: #111;
+  font-family: system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Hover preview - image only, follows mouse */
+.preview-image {
+  position: fixed;
+  max-width: 320px;
+  max-height: 80vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  display: block;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: 0;
+  transform: scale(0.95);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.preview-image.visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* White cards for GetMeXP & FlightGrab */
+.project-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+}
+
+.project-card-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+
+.project-card-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.projects-section {
+  min-height: 100vh;
+  padding: 40px 40px 48px;
+  display: flex;
+  align-items: center;
+}
+
+.projects-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.projects-header {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.projects-title {
+  font-size: 36px;
+  font-weight: 900;
+  color: #111;
+  margin: 0 0 6px 0;
+  letter-spacing: -1px;
+}
+
+.projects-subtitle {
+  font-size: 14px;
+  color: #666;
+  margin: 0;
+}
+
+.featured-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.project-card {
+  border-radius: 8px;
+  padding: 16px 18px;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.project-card:hover {
+  transform: translateY(-2px);
+  border-color: #ccc;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.card-logo {
+  width: 32px;
+  height: 32px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.card-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111;
+  margin: 0 0 4px 0;
+}
+
+.card-desc {
+  font-size: 11px;
+  line-height: 1.45;
+  color: #555;
+  margin: 0;
+}
+
+.past-projects {
+  margin-top: 36px;
+  padding-top: 24px;
+  border-top: 1px solid #e0e0e0;
+}
+
+.past-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #888;
+  letter-spacing: 2px;
+  margin: 0 0 16px 0;
+}
+
+.project-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.project-item {
+  display: grid;
+  grid-template-columns: 28px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 14px 0;
+  border-bottom: 1px solid #eee;
+  text-decoration: none;
+  color: #666;
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.project-item:hover {
+  transform: translateX(8px);
+  color: #111;
+}
+
+.project-num {
+  font-size: 14px;
+  color: #999;
+}
+
+.project-name {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.project-tech {
+  font-size: 11px;
+  color: #999;
+  text-align: right;
+}
+
+@media (max-width: 1024px) {
+  .featured-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-title {
+    font-size: 28px;
+  }
+}
+
+@media (max-width: 768px) {
+  .projects-section {
+    padding: 32px 20px 40px;
+  }
+
+  .projects-header {
+    margin-bottom: 20px;
+  }
+
+  .projects-title {
+    font-size: 24px;
+  }
+
+  .project-item {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+
+  .project-tech {
+    text-align: left;
+  }
+
+  .preview-image {
+    max-width: 240px;
+  }
+}

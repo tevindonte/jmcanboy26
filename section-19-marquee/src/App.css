@@ -1,0 +1,65 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+.marquee-demo {
+  width: 100vw;
+  height: 100vh;
+  background: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.marquee-wrap {
+  width: 100%;
+  overflow: hidden;
+  user-select: none;
+}
+
+.marquee-inner {
+  display: flex;
+  flex-shrink: 0;
+  width: max-content;
+  animation: scroll 30s linear infinite;
+}
+
+.marquee-wrap:hover .marquee-inner {
+  animation-play-state: paused;
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  display: flex;
+  flex-shrink: 0;
+}
+
+.letter-block {
+  width: 120px;
+  height: 120px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  padding: 0.5rem;
+}
+
+.letter-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}

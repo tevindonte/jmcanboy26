@@ -1,0 +1,57 @@
+{
+  "particles": {
+    "density": 180,
+    "color": "#fff",
+    "size": {
+      "value": 1.5,
+      "random": true
+    },
+    "movement": {
+      "speed": 1,
+      "restless": {
+        "enabled": true,
+        "value": 8
+      }
+    },
+    "interactivity": {
+      "on_hover": {
+        "enabled": true,
+        "action": "repulse"
+      },
+      "on_click": {
+        "enabled": true,
+        "action": "big_repulse"
+      },
+      "on_touch": {
+        "enabled": true,
+        "action": "repulse"
+      }
+    }
+  },
+  "image": {
+    "src": {
+      "path": "./image.jpg",
+      "is_external": false
+    },
+    "size": {
+      "canvas_pct": 70,
+      "min_px": 200,
+      "max_px": 1440
+    }
+  },
+  "interactions": {
+    "repulse": {
+      "distance": 120,
+      "strength": 220
+    },
+    "big_repulse": {
+      "distance": 150,
+      "strength": 450
+    },
+    "grab": {
+      "distance": 100,
+      "line_width": 1
+    }
+  },
+  "disabled": false
+}

@@ -1,7 +1,8 @@
-@import './utils/variables.scss';
-
-@import './base/base.scss';
-@import './base/frame.scss';
-@import './base/loader.scss';
-
-@import './mixins/links.scss';
+@use './utils/variables' as *;
+@use './mixins/links' as *;
+@use './base/base';
+@use './base/frame';
+@use './base/loader';
+@use './base/designer';
+@use './base/scroll-indicators';
+@use './base/premium-scroll';

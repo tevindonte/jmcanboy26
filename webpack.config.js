@@ -22,7 +22,10 @@ module.exports = {
       dirApp,
       dirAssets,
       dirNode
-    ]
+    ],
+    alias: {
+      '@fonts': path.join(__dirname, 'styles', 'fonts')
+    }
   },
 
   plugins: [
@@ -71,26 +74,33 @@ module.exports = {
           {
             loader: 'css-loader',
             options: {
-              sourceMap: false
+              sourceMap: true
             }
           },
           {
             loader: 'postcss-loader',
             options: {
-              sourceMap: false
+              sourceMap: true
+            }
+          },
+          {
+            loader: 'resolve-url-loader',
+            options: {
+              sourceMap: true
             }
           },
           {
             loader: 'sass-loader',
             options: {
-              sourceMap: false
+              sourceMap: true,
+              api: 'modern-compiler'
             }
           }
         ]
       },
 
       {
-        test: /\.(jpe?g|png|gif|svg|woff2?|fnt|webp)$/,
+        test: /\.(jpe?g|png|gif|svg|woff2?|ttf|otf|fnt|webp)$/,
         loader: 'file-loader',
         options: {
           name (file) {

@@ -1,1 +1,324 @@
-<!doctype html><html lang="en" class="no-js loading"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"><title>Infinite Circular Gallery | Codrops</title><meta name="description" content="An infinite circular gallery using WebGL with OGL and GLSL Shaders."/><meta name="keywords" content="javascript, webgl, gallery, shaders, glsl, inspiration, web design"/><meta name="author" content="Codrops"/><link rel="shortcut icon" href="favicon.ico"><link rel="stylesheet" href="https://use.typekit.net/zvj1jsw.css"><link href="main.css" rel="stylesheet"></head><body><main><div class="frame"><div class="frame__title-wrap"><h1 class="frame__title">Infinite Circular Gallery</h1><p class="frame__tagline">using <a href="https://github.com/oframe/ogl">OGL</a> with shaders</p></div><div class="frame__links"><a href="https://tympanus.net/Development/ButtonHoverStyles/">Previous Demo</a> <a href="https://tympanus.net/codrops/?p=53491">Article</a> <a href="https://github.com/lhbizarro/infinite-circular-webgl-gallery" target="_blank">GitHub</a></div></div></main><script src="main.js"></script></body></html>
+<!DOCTYPE html>
+<html lang="en" class="no-js loading" style="background:#000!important">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Jmcanboy | Portfolio</title>
+    <meta name="description" content="Jmcanboy | Portfolio - Interactive WebGL gallery, 3D experiences, motion design & creative development." />
+    <meta name="keywords" content="portfolio, webgl, 3d, motion design, creative development, tevin parboosingh" />
+    <link rel="preconnect" href="https://use.typekit.net" crossorigin>
+    <meta name="author" content="Codrops" />
+    <link rel="icon" href="d.png" type="image/png">
+    <link rel="stylesheet" href="https://use.typekit.net/zvj1jsw.css">
+    <style>
+      #loadingScreen{position:fixed!important;top:0;left:0;right:0;bottom:0;width:100vw;height:100vh;max-width:100vw;max-height:100vh;overflow:hidden;background:#000;z-index:99999;display:flex;align-items:center;justify-content:center;transition:opacity .8s ease,visibility .8s ease}
+      #loadingScreen.loaded{opacity:0;visibility:hidden;pointer-events:none}
+      #bouncingNumber{position:absolute;font-size:clamp(48px,10vw,90px);font-weight:900;font-family:'Arial Black',Arial,sans-serif;color:#fff;transition:color .3s ease;user-select:none;will-change:transform;transform-origin:center center;white-space:nowrap;box-sizing:border-box}
+      html.loading,html.loading body{margin:0;padding:0;overflow:hidden!important;position:fixed!important;top:0;left:0;right:0;bottom:0;width:100%;height:100vh;max-height:100vh}
+    </style>
+  <link href="main.css" rel="stylesheet"></head>
+  <body>
+    <header class="top-logo-header">
+      <a href="#" class="top-logo-link">
+        <img src="usageblack.png" class="top-logo-img animate-spinY" alt="Usage Logo" />
+      </a>
+      <label class="perf-mode-toggle" title="Use placeholder images instead of 3D models for faster performance">
+        <input type="checkbox" id="perfMode" aria-label="Performance mode" />
+        <span>Light mode</span>
+      </label>
+    </header>
+    <div class="loading-screen" id="loadingScreen">
+      <div class="bouncing-number" id="bouncingNumber">0%</div>
+    </div>
+    <script>
+(function(){
+  var s=document.getElementById('loadingScreen'),n=document.getElementById('bouncingNumber');
+  if(!s||!n)return;
+  document.body.classList.add('loading');
+  var colors=['#FF6B6B','#4ECDC4','#FFE66D','#A8E6CF','#FF8B94','#C7CEEA'];
+  var x=0,y=0,vx=4,vy=4,progress=0,targetProgress=0,colorIdx=0;
+  var maxX=50,maxY=50;
+  function updateBounds(){
+    var rect=n.getBoundingClientRect();
+    var w=rect.width||120;
+    var h=rect.height||80;
+    maxX=Math.max(10,(window.innerWidth-w)*0.5);
+    maxY=Math.max(10,(window.innerHeight-h)*0.5);
+  }
+  function changeColor(){colorIdx=(colorIdx+1)%colors.length;n.style.color=colors[colorIdx];}
+  function initPos(){updateBounds();x=(Math.random()*2-1)*maxX;y=(Math.random()*2-1)*maxY;}
+  function tick(){
+    var spd=1+(progress/100)*0.6;x+=vx*spd;y+=vy*spd;
+    updateBounds();
+    if(x<=-maxX||x>=maxX){vx*=-1;x=Math.max(-maxX,Math.min(x,maxX));changeColor();}
+    if(y<=-maxY||y>=maxY){vy*=-1;y=Math.max(-maxY,Math.min(y,maxY));changeColor();}
+    x=Math.max(-maxX,Math.min(x,maxX));y=Math.max(-maxY,Math.min(y,maxY));
+    var scale=1+(progress/100)*0.2;n.style.transform='translate('+x+'px,'+y+'px) scale('+scale+')';
+    if(progress<targetProgress){progress+=0.8;n.textContent=Math.min(100,Math.floor(progress))+'%';}
+    if(progress>=100){document.body.classList.remove('loading');s.classList.add('loaded');document.documentElement.classList.remove('loading');document.documentElement.classList.add('loaded');setTimeout(function(){s.remove();},900);return;}
+    requestAnimationFrame(tick);
+  }
+  window.addEventListener('resize',function(){if(s.parentNode){updateBounds();x=Math.max(-maxX,Math.min(x,maxX));y=Math.max(-maxY,Math.min(y,maxY));}});
+  if(document.readyState==='complete')targetProgress=100;else window.addEventListener('load',function(){targetProgress=100;});
+  var sim=setInterval(function(){if(targetProgress<85)targetProgress+=2+Math.random()*8;else clearInterval(sim);},150);
+  n.style.color=colors[0];initPos();tick();
+})();
+    </script>
+    <div id="gallery-section" class="gallery-section" data-section="1" data-lenis-prevent>
+      <div class="gallery-section__tiles" aria-hidden="true">
+        <div class="tiles__line tiles__line--1">
+          <div class="tiles__line-img tiles__line-img--large" style="background-image:url(gallery-tiles/4.jpg)"></div>
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/5.gif)"></div>
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/6.jpg)"></div>
+          <div class="tiles__line-img tiles__line-img--large" style="background-image:url(gallery-tiles/4.jpg)"></div>
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/5.gif)"></div>
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/6.jpg)"></div>
+        </div>
+        <div class="tiles__line tiles__line--2">
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/1.jpg)"></div>
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/2.png)"></div>
+          <div class="tiles__line-img tiles__line-img--large" style="background-image:url(gallery-tiles/3.jpg)"></div>
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/1.jpg)"></div>
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/2.png)"></div>
+          <div class="tiles__line-img tiles__line-img--large" style="background-image:url(gallery-tiles/3.jpg)"></div>
+        </div>
+        <div class="tiles__line tiles__line--3">
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/7.gif)"></div>
+          <div class="tiles__line-img tiles__line-img--large" style="background-image:url(gallery-tiles/8.jpg)"></div>
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/9.jpg)"></div>
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/7.gif)"></div>
+          <div class="tiles__line-img tiles__line-img--large" style="background-image:url(gallery-tiles/8.jpg)"></div>
+          <div class="tiles__line-img" style="background-image:url(gallery-tiles/9.jpg)"></div>
+        </div>
+      </div>
+      <!-- Canvas appended here by app -->
+    </div>
+
+    <section class="model-section" data-section="5" data-interactive data-heavy-3d>
+      <div class="heavy-3d-placeholder" data-label="Hong Kong 3D">
+        <span class="heavy-3d-loading-text">Loading 3D… <strong class="heavy-3d-percent">0</strong>%</span>
+        <div class="heavy-3d-progress-bar"><div class="heavy-3d-progress-fill"></div></div>
+      </div>
+      <iframe
+        data-src="section-5-glb/"
+        title="3D Model Environment"
+        class="model-iframe"
+      ></iframe>
+    </section>
+
+    <div class="horizontal-scroll-section" data-lenis-prevent>
+      <div class="horizontal-content-track">
+        <section class="horizontal-scroll-item about-section" data-section="6">
+          <iframe
+            src="section-6-aboutme/"
+            title="About Me"
+            class="about-iframe"
+            loading="lazy"
+          ></iframe>
+        </section>
+        <section class="horizontal-scroll-item projects-section" data-section="7">
+          <iframe
+            src="section-7-projects/"
+            title="What I Am Building"
+            class="projects-iframe"
+            loading="lazy"
+          ></iframe>
+        </section>
+        <section class="horizontal-scroll-item credentials-section" data-section="8">
+          <iframe
+            src="section-8-credentials/"
+            title="Credentials & Professions"
+            class="credentials-iframe"
+            loading="lazy"
+          ></iframe>
+        </section>
+      </div>
+    </div>
+
+    <section class="circling-section" data-section="9">
+      <iframe
+        src="section-9-circling/"
+        title="Circling Elements"
+        class="circling-iframe"
+        loading="lazy"
+      ></iframe>
+    </section>
+
+    <div class="horizontal-scroll-section" data-lenis-prevent>
+      <div class="horizontal-content-track">
+        <section class="horizontal-scroll-item particle-section" data-section="10" data-interactive data-heavy-3d>
+          <div class="heavy-3d-placeholder" data-label="Gaussian Splat">
+            <span class="heavy-3d-loading-text">Loading 3D… <strong class="heavy-3d-percent">0</strong>%</span>
+            <div class="heavy-3d-progress-bar"><div class="heavy-3d-progress-fill"></div></div>
+          </div>
+          <iframe
+            data-src="section-9-widen/"
+            title="Particle / Gaussian Splat Viewer"
+            class="particle-iframe"
+          ></iframe>
+        </section>
+        <section class="horizontal-scroll-item gradientslider-section" data-section="11">
+          <iframe
+            src="gradientslider/"
+            title="Gradient Carousel"
+            class="gradientslider-iframe"
+            loading="lazy"
+          ></iframe>
+        </section>
+        <section class="horizontal-scroll-item grid-section" data-section="12">
+          <iframe
+            src="section-8-grid/"
+            title="Logo Design Grid"
+            class="grid-iframe"
+            loading="lazy"
+          ></iframe>
+        </section>
+        <section class="horizontal-scroll-item motion-grid-section" data-section="motion">
+          <iframe
+            src="section-10-motion-grid/"
+            title="Motion Design Grid"
+            class="motion-grid-iframe"
+            loading="lazy"
+          ></iframe>
+        </section>
+        <section class="horizontal-scroll-item videos-section" data-section="13">
+          <iframe
+            src="section-9-videos/"
+            title="Video Grid"
+            class="videos-iframe"
+            loading="lazy"
+          ></iframe>
+        </section>
+        <section class="horizontal-scroll-item grid-slideshow-section" data-section="14">
+          <iframe
+            src="section-10-grid-slideshow/"
+            title="Grid Layout Slideshow"
+            class="grid-slideshow-iframe"
+            loading="lazy"
+          ></iframe>
+        </section>
+      </div>
+    </div>
+
+    <section class="rotating-section" data-section="15">
+      <iframe
+        src="section-15-rotating/"
+        title="Rotating Image Gallery"
+        class="rotating-iframe"
+        loading="lazy"
+      ></iframe>
+    </section>
+
+    <div class="horizontal-scroll-section" data-lenis-prevent>
+      <div class="horizontal-content-track">
+        <section class="horizontal-scroll-item carousel-section" data-section="16">
+          <iframe
+            src="r3f-carousel/"
+            title="R3F Carousel"
+            class="carousel-iframe"
+            loading="lazy"
+          ></iframe>
+        </section>
+
+        <section class="horizontal-scroll-item repeating-section" data-section="17">
+          <iframe
+            src="section-13-repeating/"
+            title="Repeating Image Transition"
+            class="repeating-iframe"
+            loading="lazy"
+          ></iframe>
+        </section>
+
+        <section class="horizontal-scroll-item gallery-infinite-section" data-section="18">
+          <iframe
+            src="infinite-img-gallery/"
+            title="Infinite Image Gallery"
+            class="gallery-infinite-iframe"
+            loading="lazy"
+          ></iframe>
+        </section>
+      </div>
+    </div>
+
+    <section class="marquee-svg-section" data-section="19">
+      <iframe
+        src="section-19-marquee/"
+        title="Marquee Along SVG Path"
+        class="marquee-svg-iframe"
+        loading="lazy"
+      ></iframe>
+    </section>
+
+    <section class="footer-section" data-section="20">
+      <div class="footer_content">
+        <div class="footer_lists reveal-element">
+          <ul>
+            <li>
+              <div class="footer_lines">
+                <span class="footer_line footer_line--left"></span>
+              </div>
+            </li>
+            <li>
+              <p class="footer_label">GET IN TOUCH</p>
+              <p class="footer_value"><a href="mailto:tparboosingh84@gmail.com">TPARBOOSINGH84@GMAIL.COM</a></p>
+              <div class="footer_lines">
+                <span class="footer_line footer_line--left"></span>
+              </div>
+            </li>
+            <li>
+              <p class="footer_label">LOCATION</p>
+              <p class="footer_value">NEW YORK, CONNECTICUT</p>
+              <div class="footer_lines">
+                <span class="footer_line footer_line--left"></span>
+              </div>
+            </li>
+          </ul>
+          <ul>
+            <li class="footer_spacer">
+              <div class="footer_lines">
+                <span class="footer_line footer_line--right"></span>
+              </div>
+            </li>
+            <li>
+              <p class="footer_label">BLOG</p>
+              <p class="footer_value"><a href="https://medium.com/@tparboosingh84" target="_blank" rel="noopener">https://medium.com/@tparboosingh84</a></p>
+              <div class="footer_lines">
+                <span class="footer_line footer_line--right"></span>
+              </div>
+            </li>
+            <li>
+              <p class="footer_label">GITHUB</p>
+              <p class="footer_value"><a href="https://github.com/tevindonte" target="_blank" rel="noopener">https://github.com/tevindonte</a></p>
+              <div class="footer_lines">
+                <span class="footer_line footer_line--right"></span>
+              </div>
+            </li>
+            <li>
+              <p class="footer_label">STORE</p>
+              <p class="footer_value"><a href="https://payhip.com/usage" target="_blank" rel="noopener">https://payhip.com/usage</a></p>
+              <div class="footer_lines">
+                <span class="footer_line footer_line--right"></span>
+              </div>
+            </li>
+            <li>
+              <p class="footer_label">LINKEDIN</p>
+              <p class="footer_value"><a href="https://www.linkedin.com/in/tevindonte/" target="_blank" rel="noopener">https://www.linkedin.com/in/tevindonte/</a></p>
+              <div class="footer_lines">
+                <span class="footer_line footer_line--right"></span>
+              </div>
+            </li>
+            <li>
+              <p class="footer_label">INSTAGRAM</p>
+              <p class="footer_value"><a href="http://instagram.com/imakecompanies" target="_blank" rel="noopener">http://instagram.com/imakecompanies</a></p>
+              <div class="footer_lines">
+                <span class="footer_line footer_line--right"></span>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <h1 class="footer_title reveal-element">Jmcanboy</h1>
+        <p class="footer_copyright reveal-element">© 2026 TEVIN PARBOOSINGH</p>
+      </div>
+    </section>
+  <script src="main.js"></script></body>
+</html>

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Reactive Depth | Codrops Tutorial</title>
+  <link rel="stylesheet" href="css/article.css" />
+</head>
+<body>
+  <article class="article">
+    <header class="article__header">
+      <nav class="article__nav">
+        <a href="#">All Posts</a>
+        <a href="#">Creative Hub</a>
+        <a href="#">Webzibition</a>
+      </nav>
+      <h1 class="article__title">Reactive Depth: Building a Scroll-Driven 3D Image Tube with React Three Fiber</h1>
+      <p class="article__lead">Build a scroll-driven, infinitely looping 3D image tube in React Three Fiber powered by shaders, inertia, and a unified motion system.</p>
+      <p class="article__meta">By Matis Dené in Tutorials on February 17, 2026</p>
+      <div class="article__links">
+        <a href="#" class="article__link">Demo</a>
+        <a href="#" class="article__link">Code</a>
+      </div>
+    </header>
+
+    <div class="article__body">
+      <p class="article__intro">In this tutorial, you'll learn how to build a scroll-driven, infinitely looping 3D image tube using React Three Fiber. We'll combine shader-based deformation, inertial motion, deterministic looping, and synchronized DOM overlays to create a tactile and physically coherent WebGL experience.</p>
+
+      <h2>1. Introduction</h2>
+      <p>In this tutorial, we're going to build an interactive 3D scene made of three main parts:</p>
+      <ul>
+        <li>A grid in the background that reacts to your mouse</li>
+        <li>A cylindrical tube of images that scrolls up and down</li>
+        <li>A glass helmet that rotates with the tube</li>
+      </ul>
+      <p>On top of that, we'll add:</p>
+      <ul>
+        <li>A hover effect that gently slows everything down</li>
+        <li>A tooltip built in the DOM that follows the mouse</li>
+        <li>A smooth custom cursor</li>
+      </ul>
+      <p>The goal isn't realism. It's about creating a scene where everything feels connected. Scrolling, moving the mouse, hovering — they all influence the same motion system.</p>
+
+      <h2>2. Motion as a Shared Signal</h2>
+      <p>Instead of treating each interaction separately, we let everything affect the same system.</p>
+      <ul>
+        <li>Scroll moves the tube vertically</li>
+        <li>Scroll speed adds rotation</li>
+        <li>The mouse position changes the shape of the grid</li>
+        <li>Hover slows down time</li>
+      </ul>
+      <p>All the important values live inside useRef:</p>
+      <pre><code>const tubeScrollTarget = useRef(0);
+const tubeSpinVelocity = useRef(0);
+const tubeAngle = useRef(0);
+const rotationSpeedScaleTargetRef = useRef(1);</code></pre>
+      <p>Inside useFrame, we update everything every frame. We don't use React state here. Nothing re-renders every frame. Everything stays inside the animation loop.</p>
+
+      <h2>3. The Grid Plane: Deforming Geometry in the Vertex Shader</h2>
+      <p>The grid is just a plane, but it has a lot of subdivisions. We need many segments because we're moving the vertices in the shader. We measure how close each vertex is to the edge and to the mouse position, use smoothstep to make both effects fade smoothly, and push the vertex forward in Z. There are no hard edges, no sudden jumps. Everything blends smoothly.</p>
+
+      <h2>4. Drawing the Grid in the Fragment Shader</h2>
+      <p>The grid itself is not a texture. It's generated mathematically. The key ideas: fract() repeats a value between 0 and 1, so the pattern tiles infinitely. The abs(fract(x - 0.5) - 0.5) trick gives us distance from the center of each cell. fwidth() makes the lines anti-aliased and stable at any resolution. Without fwidth, the lines would shimmer while moving.</p>
+
+      <h2>5. Seamless Vertical Looping</h2>
+      <p>The tube is not infinite. We just reposition it when needed. We adjust both the current position and the target value. That's what prevents visible jumps. Each image is positioned around a circle, and each plane faces outward from the center.</p>
+
+      <h2>6. Inertia and Damping</h2>
+      <p>Scroll doesn't directly rotate the tube. It adds velocity. Every frame, we damp it and clamp it. That's what gives us smooth, controlled motion instead of chaos.</p>
+
+      <h2>7. Hover Slows Down Time</h2>
+      <p>When you hover an image, we don't change rotation directly. We slow down time. Because we scale dt, the whole system slows down consistently. The inertia still makes sense.</p>
+
+      <h2>8. Controlling Event Propagation</h2>
+      <p>Each mesh stops event bubbling. This prevents hover events from interfering with the container-level pointer tracking.</p>
+
+      <h2>9. Performance</h2>
+      <ul>
+        <li>No raycasting</li>
+        <li>No React state inside the animation loop</li>
+        <li>No per-frame allocations</li>
+        <li>Shader-driven deformation</li>
+        <li>DOM animations handled outside React</li>
+      </ul>
+      <p>The frame rate stays stable even with strong scroll input.</p>
+
+      <h2>Wrapping Up</h2>
+      <p>This isn't just a collection of animations. It's one connected motion system. Scroll adds energy. Energy creates rotation. Hover slows time. The shader reshapes space. The DOM reacts to interaction.</p>
+    </div>
+
+    <footer class="article__footer">
+      <div class="article__author">
+        <strong>Matis Dené</strong>
+        <p>Matis is a frontend developer specializing in real-time 3D experiences on the web. Working with Three.js and custom GLSL shaders, he builds interactive environments where depth, motion, and physics-inspired systems shape the interface.</p>
+      </div>
+      <div class="article__tags">
+        <span class="tag">3D</span>
+        <span class="tag">infinite</span>
+        <span class="tag">React Three Fiber</span>
+        <span class="tag">scroll</span>
+        <span class="tag">Three.js</span>
+        <span class="tag">WebGL</span>
+      </div>
+    </footer>
+  </article>
+</body>
+</html>
