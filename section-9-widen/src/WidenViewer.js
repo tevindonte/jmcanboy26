@@ -64,6 +64,12 @@ export default class WidenViewer {
         try { window.parent.postMessage({ type: "3d-load-progress", progress }, "*"); } catch {}
       },
       onError: () => {
+        try {
+          window.parent.postMessage(
+            { type: "3d-load-error", message: "Gaussian model failed to load" },
+            "*"
+          );
+        } catch {}
         const el = document.createElement("div");
         el.style.cssText = "position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,0.4);font:14px system-ui;flex-direction:column;gap:8px;text-align:center;padding:20px;";
         el.innerHTML = "Add <code style='font-size:12px'>widen_1220x0.min.ply</code> to <code style='font-size:11px'>section-9-widen/public/</code>";

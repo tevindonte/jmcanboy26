@@ -5,7 +5,7 @@
  * - Loading overlay: shows "Loading 3D… X%" until iframe posts 3d-load-complete
  */
 const STORAGE_KEY = 'portfolio-lite'
-const ROOT_MARGIN = '100vh'
+const ROOT_MARGIN = '100%'
 
 export function isPerformanceMode () {
   try {
@@ -48,6 +48,13 @@ function showLitePlaceholder (placeholder) {
   if (progressBar) progressBar.style.display = 'none'
 }
 
+function showErrorPlaceholder (placeholder, message) {
+  const text = placeholder.querySelector('.heavy-3d-loading-text')
+  const progressBar = placeholder.querySelector('.heavy-3d-progress-bar')
+  if (text) text.textContent = message || '3D failed to load'
+  if (progressBar) progressBar.style.display = 'none'
+}
+
 export default function initHeavySectionLoader () {
   const lite = isPerformanceMode()
   const sections = document.querySelectorAll('[data-heavy-3d]')
@@ -81,6 +88,10 @@ export default function initHeavySectionLoader () {
       if (d?.type === '3d-load-complete') {
         window.removeEventListener('message', handleMessage)
         hideOverlay()
+      }
+      if (d?.type === '3d-load-error') {
+        window.removeEventListener('message', handleMessage)
+        showErrorPlaceholder(placeholder, d.message || '3D failed to load')
       }
     }
     window.addEventListener('message', handleMessage)
@@ -124,6 +135,14 @@ export default function initHeavySectionLoader () {
       }
       horizontalParent.addEventListener('scroll', onScrollOrResize, { passive: true })
       window.addEventListener('resize', onScrollOrResize)
+    }
+
+    // Fallback for the Gaussian section: horizontal visibility checks can miss,
+    // leaving iframe without src and stuck at 0%.
+    if (section.dataset.section === '10') {
+      window.setTimeout(() => {
+        load()
+      }, 1200)
     }
   })
 }

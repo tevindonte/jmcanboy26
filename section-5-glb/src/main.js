@@ -25,6 +25,7 @@ const viewer = new GLBModelViewer(container, {
     try { window.parent.postMessage({ type: "3d-load-progress", progress }, "*"); } catch {}
   },
   onError: () => {
+    try { window.parent.postMessage({ type: "3d-load-error", message: "3D model failed to load" }, "*"); } catch {}
     loaderText.textContent = "";
     loaderEl.classList.add("hidden");
     const msg = document.createElement("div");

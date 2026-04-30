@@ -43,9 +43,8 @@ export default class PlyLoader {
   }
 
   #parse(buffer) {
-    const headerEnd = this.#findHeaderEnd(buffer);
+    const { headerEnd, dataStart } = this.#findHeaderEnd(buffer);
     const headerText = new TextDecoder().decode(new Uint8Array(buffer, 0, headerEnd));
-    const dataStart = headerEnd + "end_header\n".length;
     const { vertexCount, properties, stride } = this.#parseHeader(headerText);
     const dataView = new DataView(buffer, dataStart);
 
@@ -107,7 +106,10 @@ export default class PlyLoader {
     this.particlesVariable.material.uniforms.uFlowFieldInfluence = { value: this.flowFieldInfluence };
     this.particlesVariable.material.uniforms.uFlowFieldStrength = { value: this.flowFieldStrength };
     this.particlesVariable.material.uniforms.uFlowFieldFrequency = { value: this.flowFieldFrequency };
-    this.gpgpu.init();
+    const gpgpuInitError = this.gpgpu.init();
+    if (gpgpuInitError) {
+      throw new Error(`GPGPU init failed: ${gpgpuInitError}`);
+    }
   }
 
   #setupParticles(positions, colors, vertexCount) {
@@ -166,13 +168,21 @@ export default class PlyLoader {
 
   #findHeaderEnd(buffer) {
     const bytes = new Uint8Array(buffer);
-    const target = "end_header\n";
-    for (let i = 0; i < Math.min(bytes.length, 4096); i++) {
+    const target = "end_header";
+    const maxScan = Math.min(bytes.length, 16384);
+    for (let i = 0; i < maxScan; i++) {
       let match = true;
       for (let j = 0; j < target.length; j++) {
         if (bytes[i + j] !== target.charCodeAt(j)) { match = false; break; }
       }
-      if (match) return i;
+      if (match) {
+        // Skip "end_header" and consume optional CR/LF line ending(s)
+        let dataStart = i + target.length;
+        while (dataStart < bytes.length && (bytes[dataStart] === 10 || bytes[dataStart] === 13)) {
+          dataStart++;
+        }
+        return { headerEnd: i, dataStart };
+      }
     }
     throw new Error("Could not find PLY header end");
   }
